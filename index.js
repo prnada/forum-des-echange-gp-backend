@@ -83,6 +83,6 @@ app.get('/home',verifyUser, (req,res) => {
     return res.json("success")
 }) 
 
-app.listen(3001, () => {
+app.listen(3000, () => {
     console.log(`runnig`);
   });
