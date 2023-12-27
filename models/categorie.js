@@ -5,10 +5,10 @@ const Schema = mongoose.Schema;
 const categorieSchema = Schema({
     nom: { type: String, required: true },
     description: { type: String, required: true },
-    personne: { type: mongoose.Schema.Types.ObjectId, ref: 'Personne', required: true }
+     
   }, { timestamps: true });
   
 //
-const categorieModel = mongoose.model('Categorie', categorieSchema);
+const categorieModel = mongoose.model('categories', categorieSchema);
 
 module.exports=categorieModel;

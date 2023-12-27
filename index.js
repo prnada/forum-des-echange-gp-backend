@@ -14,8 +14,8 @@ const cookieParser = require('cookie-parser')
 app.use(cookieParser())
 app.use(express.json())
 app.use(cors( {
-   origin:["http://localhost:5173"],
-   methods: ["GET","POST"],
+   origin:["http://localhost:3000"],
+   methods: ["GET","POST","DELETE","UPDATE"],
    credentials : true
 }
 ))
@@ -83,6 +83,26 @@ app.get('/home',verifyUser, (req,res) => {
     return res.json("success")
 }) 
 
-app.listen(3000, () => {
+//Categories
+
+app.get('/categories', (req,res)=> {
+    categorieModel.find({})
+    .then(categories=> res.json(categories))
+    .catch(err => res.json(err))
+})
+
+app.post("/new-category",(req,res)=>{
+    categorieModel.create(req.body)
+    .then(categories => res.json(categories))
+    .catch(err=> res.json(err))
+}) 
+
+app.delete("/delete/:id", (req, res) => {
+    categorieModel.findByIdAndDelete({ _id: req.params.id })
+    .then(categories => res.json(categories))
+    .catch((err) => res.json(err))
+      
+  });
+app.listen(3001, () => {
     console.log(`runnig`);
   });

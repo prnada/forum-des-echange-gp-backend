@@ -18,7 +18,7 @@ commentaires: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Commentaire' }]
 }, { timestamps: true });  
 
 // 
-const personneModel = mongoose.model('Personne', personneSchema);
+const personneModel = mongoose.model('personnes', personneSchema);
 
 
 
