@@ -69,10 +69,10 @@ app.post("/login", (req, res) => {
             }
         })
 })
-app.get("/profile", verifyUser, async (req, res) => {
+app.get("/profile/:id", verifyUser, async (req, res) => {
     try {
         const Post = mongoose.model('Post', postSchema);
-        const user = await personneModel.findOne({ email: req.decodedtoken.email }).populate('posts').select('prenom nom email').exec();
+        const user = await personneModel.findOne({ _id: req.params.id }).populate('posts').select('prenom nom email').exec();
 
         if (user) {
             const posts = user.posts ? user.posts.map(post => ({
