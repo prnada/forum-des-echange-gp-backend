@@ -6,11 +6,13 @@ const personneSchema = Schema({
   nom: String,
   prenom: String,
   email: String,
-  role: String,
+  role: {
+    type: String,
+    enum: ['user','admin'],
+    default:'user'
+  },
   age: Number,
-
   pays: String,
-
   password: String,
   posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
   categories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Categorie' }],
