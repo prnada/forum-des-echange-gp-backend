@@ -7,10 +7,10 @@ const postSchema = Schema({
   date: { type: Date, default: Date.now },
   titre: { type: String, required: true },
   contenu: { type: String, required: true },
-  personne: [{
+  personne: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Personne', required: true
-  }]
+  }
 }, { timestamps: true });
 
 // 
