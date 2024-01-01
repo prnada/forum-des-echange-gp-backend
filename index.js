@@ -25,7 +25,19 @@ mongoose
 .connect(
    "mongodb+srv://ELKHALDI-Nada:DH0ST0WMj1VhHKeW@forum-db.ygxqjnk.mongodb.net/?retryWrites=true&w=majority"
 )
- 
+
+const verifyUser= (req, res, next) =>{
+    const token = req.cookies.token;
+    console.log(token);
+    if(!token){
+        return res.json("Token not available")
+    } else{
+        jwt.verify(token,"jwt-secret-key",(err,decoded)=> {
+            if(err) {return res.json("token is wrong")}
+            next();
+        })
+    }
+}
 
 app.post('/register', (req,res) => {
     const{nom,prenom,age,email,password,telephone,pays}=req.body;
@@ -66,24 +78,14 @@ app.post('/logout', (req, res) => {
   });
 
 
+app.post('/Posting', verifyUser, async (req, res) => {
+    const { titre, contenu, personne } = req.body; 
+    const newPost = await postModel.create({titre, contenu, personne, date: new Date(), });
+});
 
-const verifyUser= (req, res, next) =>{
-    const token= req.cookies.token;
-    console.log(token);
-    if(!token){
-        return res.json("Token not available")
-    } else{
-        jwt.verify(token,"jwt-secret-key",(err,decoded)=> {
-            if(err) {return res.json("token is wrong")}
-            next();
-        })
-    }
-}
 app.get('/home',verifyUser, (req,res) => { 
     return res.json("success")
 }) 
-
-//Categories
 
 app.get('/categories', (req,res)=> {
     categorieModel.find({})
