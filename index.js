@@ -71,8 +71,9 @@ app.post("/login", (req, res) => {
 })
 
 app.post('/Posting', verifyUser, async (req, res) => {
-    const { titre, contenu, personne } = req.body; 
-    const newPost = await postModel.create({titre, contenu, personne, date: new Date(), });
+    const { titre, contenu, personne } = req.body;
+    const postModel = mongoose.model('posts', postSchema);
+    const newPost = await postModel.create({ titre, contenu, personne, date: new Date(), });
 })
 
 app.get("/profile/:id", verifyUser, async (req, res) => {
