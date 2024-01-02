@@ -8,9 +8,7 @@ const personneSchema = Schema({
   email: String,
   role: String,
   age: Number,
-
   pays: String,
-
   password: String,
   posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
   categories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Categorie' }],
