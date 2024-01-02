@@ -82,6 +82,11 @@ app.post("/login", (req, res) => {
             }
         })
 })
+app.post('/logout', (req, res) => {
+    res.clearCookie('token');
+    res.json('Logged out successfully');
+});
+
 
 app.post('/Posting', verifyUser, async (req, res) => {
     const { titre, contenu, personne } = req.body;
@@ -108,10 +113,7 @@ app.get("/profile/:id", verifyUser, async (req, res) => {
         res.status(500).json({ error: "Server error" });
     }
 });
-app.post('/logout', (req, res) => {
-    res.clearCookie('token');
-    res.json('Logged out successfully');
-});
+
 
 
 app.get('/', verifyUser, (req, res) => {
@@ -150,6 +152,23 @@ app.delete("/delete/:id", (req, res) => {
         .catch((err) => res.json(err))
 
 });
+
+//users 
+
+
+app.get('/admin', (req,res)=> {
+    personneModel.find({})
+    .then(personnes=> res.json(personnes))
+    .catch(err => res.json(err))
+})
+ 
+app.delete("/delete/:id", (req, res) => {
+    personneModel.findByIdAndDelete({ _id: req.params.id })
+        .then(personnes => res.json(personnes))
+        .catch((err) => res.json(err))
+
+});
+
 app.listen(3001, () => {
     console.log(`runnig`);
 });
