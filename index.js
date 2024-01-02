@@ -29,8 +29,8 @@ app.use(session({
 mongoose
     .connect(
         "mongodb+srv://ELKHALDI-Nada:DH0ST0WMj1VhHKeW@forum-db.ygxqjnk.mongodb.net/?retryWrites=true&w=majority"
-    )
- 
+)
+
 const verifyUser = (req, res, next) => {
     const token = req.cookies.token;
     if (!token) {
@@ -94,6 +94,23 @@ app.post('/Posting', verifyUser, async (req, res) => {
     const newPost = await postModel.create({ titre, contenu, personne, date: new Date(), });
 })
 
+
+app.get('/Posts', async (req, res) =>
+{ 
+    const postModel = mongoose.model('posts', postSchema);
+    const posts = await postModel.find();
+    res.json(posts);
+});
+
+app.get('/Posts/:id', async (req, res) =>
+{
+    const postModel = mongoose.model('posts', postSchema);
+    const postId = req.params.id;
+    const post = await postModel.findById(postId);
+    res.json(post);
+});
+
+
 app.get("/profile/:id", verifyUser, async (req, res) => {
     try {
         const Post = mongoose.model('Post', postSchema);
@@ -114,6 +131,13 @@ app.get("/profile/:id", verifyUser, async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
+=======
+app.post('/logout', (req, res) => {
+    res.clearCookie('token');
+    res.json('Logged out successfully');
+});
+>>>>>>> 69333090a1b710406e9277ffa6e9576a15510630
 
 
 app.get('/', verifyUser, (req, res) => {
