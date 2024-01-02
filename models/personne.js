@@ -6,7 +6,11 @@ const personneSchema = Schema({
   nom: String,
   prenom: String,
   email: String,
-  role: String,
+  role: {
+    type: String,
+    enum: ['user','admin'],
+    default:'user'
+  },
   age: Number,
   pays: String,
   password: String,

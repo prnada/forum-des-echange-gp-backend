@@ -7,7 +7,9 @@ const commentaireSchema = Schema({
   contenu: { type: String, required: true },
   date: { type: Date, default: Date.now },
   personneId: { type: mongoose.Schema.Types.ObjectId, ref: 'Personne', required: true },
-  postId: {type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true}
+  postId: {type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true},
+  personne: { type: mongoose.Schema.Types.ObjectId, ref: 'Personne', required: true },
+  post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true }
 }, { timestamps: true });
 
 

@@ -2,6 +2,7 @@ const express = require("express")
 const mongoose = require("mongoose")
 const cors = require("cors")
 const app = express()
+const session = require('express-session');
 
 const personneModel = require('./models/personne')
 const postSchema = require('./models/post')
@@ -19,30 +20,36 @@ app.use(cors({
     credentials: true
 }
 ))
-
+app.use(session({
+    secret: 'jwt-secret-key',  
+    resave: false,  
+    saveUninitialized: false  
+  }));
 
 mongoose
     .connect(
         "mongodb+srv://ELKHALDI-Nada:DH0ST0WMj1VhHKeW@forum-db.ygxqjnk.mongodb.net/?retryWrites=true&w=majority"
 )
-    
+
 const verifyUser = (req, res, next) => {
     const token = req.cookies.token;
     if (!token) {
-        return res.json("Token not available")
+      return res.json("Token not available");
     } else {
-        jwt.verify(token, "jwt-secret-key", (err, decoded) => {
-            if (err) { return res.json("token is wrong") }
-            req.decodedtoken = decoded;
-            next();
-        })
+      jwt.verify(token, "jwt-secret-key", (err, decoded) => {
+        if (err) {
+          return res.json("Token is incorrect");
+        }
+        req.decodedtoken = decoded;
+        next();
+      });
     }
-}
+  };
 app.post('/register', (req, res) => {
-    const { nom, prenom, age, email, password, telephone, pays } = req.body;
+    const { nom, prenom, age ,email, password, pays } = req.body;
     bcrypt.hash(password, 10)
         .then(hash => {
-            personneModel.create({ nom, prenom, age, email, telephone, pays, password: hash })
+            personneModel.create({ nom, prenom, age, email, pays, password: hash })
                 .then(users => res.json(users))
                 .catch(err => res.json(err))
         }).catch(err => console.log(err.message))
@@ -56,9 +63,14 @@ app.post("/login", (req, res) => {
             if (user) {
                 bcrypt.compare(password, user.password, (err, result) => {
                     if (result) {
-                        const token = jwt.sign({ email: user.email, id: user.id }, "jwt-secret-key", { expiresIn: "1d" });
-                        res.cookie("token", token);
+                        const token = jwt.sign({ email: user.email, id: user.id ,role: user.role }, "jwt-secret-key", { expiresIn: "1d" });
+                        expirationTimeInMinutes = 300;
+                        const expirationTimeInMillis = expirationTimeInMinutes * 60 * 1000;
+                       res.cookie( "token", token, {
+                            maxAge: expirationTimeInMillis
+                             }, 'cookie value');
                         res.json("success");
+
                     }
                     else {
                         res.json("the password is incorrect")
@@ -119,9 +131,24 @@ app.post('/logout', (req, res) => {
     res.json('Logged out successfully');
 });
 
-app.get('/home', verifyUser, (req, res) => {
-    return res.json("success")
+
+app.get('/', verifyUser, (req, res) => {
+    if(req.session.role){
+        return res.json({valid: true , role: req.session.role})
+    }
+    else{
+        return res.json({valid : true})
+    }
 })
+
+app.get('/home',(req,res) => {
+    if(req.session.role){
+        return res.json({valid: true , role: req.session.role})
+    }else{
+        return res.json({valid : true})
+    }
+})
+//Categories
 
 app.get('/categories', (req, res) => {
     categorieModel.find({})
