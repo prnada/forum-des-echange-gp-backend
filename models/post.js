@@ -13,7 +13,6 @@ const postSchema = Schema({
   }
 }, { timestamps: true });
 
-
 const postModel = mongoose.model('posts', postSchema);
 
 module.exports = postSchema;
