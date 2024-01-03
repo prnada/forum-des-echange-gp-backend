@@ -224,6 +224,12 @@ app.get('/edit/:id', (req, res) => {
       .catch(err => res.json(err));
   });
 
+  app.delete("/deletePost/:id", (req, res) => {
+    postModel.findByIdAndDelete({ _id: req.params.id })
+        .then(posts => res.json([posts]))
+        .catch((err) => res.json(err))
+
+});
 app.listen(3001, () => {
     console.log(`runnig`);
 });
