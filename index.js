@@ -21,32 +21,32 @@ app.use(cors({
 }
 ))
 app.use(session({
-    secret: 'jwt-secret-key',  
-    resave: false,  
-    saveUninitialized: false  
-  }));
+    secret: 'jwt-secret-key',
+    resave: false,
+    saveUninitialized: false
+}));
 
 mongoose
     .connect(
         "mongodb+srv://ELKHALDI-Nada:DH0ST0WMj1VhHKeW@forum-db.ygxqjnk.mongodb.net/?retryWrites=true&w=majority"
-)
+    )
 
 const verifyUser = (req, res, next) => {
     const token = req.cookies.token;
     if (!token) {
-      return res.json("Token not available");
+        return res.json("Token not available");
     } else {
-      jwt.verify(token, "jwt-secret-key", (err, decoded) => {
-        if (err) {
-          return res.json("Token is incorrect");
-        }
-        req.decodedtoken = decoded;
-        next();
-      });
+        jwt.verify(token, "jwt-secret-key", (err, decoded) => {
+            if (err) {
+                return res.json("Token is incorrect");
+            }
+            req.decodedtoken = decoded;
+            next();
+        });
     }
-  };
+};
 app.post('/register', (req, res) => {
-    const { nom, prenom, age ,email, password, pays } = req.body;
+    const { nom, prenom, age, email, password, pays } = req.body;
     bcrypt.hash(password, 10)
         .then(hash => {
             personneModel.create({ nom, prenom, age, email, pays, password: hash })
@@ -63,12 +63,12 @@ app.post("/login", (req, res) => {
             if (user) {
                 bcrypt.compare(password, user.password, (err, result) => {
                     if (result) {
-                        const token = jwt.sign({ email: user.email, id: user.id ,role: user.role }, "jwt-secret-key", { expiresIn: "1d" });
+                        const token = jwt.sign({ email: user.email, id: user.id, role: user.role }, "jwt-secret-key", { expiresIn: "1d" });
                         expirationTimeInMinutes = 300;
                         const expirationTimeInMillis = expirationTimeInMinutes * 60 * 1000;
-                       res.cookie( "token", token, {
+                        res.cookie("token", token, {
                             maxAge: expirationTimeInMillis
-                             }, 'cookie value');
+                        }, 'cookie value');
                         res.json("success");
 
                     }
@@ -95,15 +95,13 @@ app.post('/Posting', verifyUser, async (req, res) => {
 })
 
 
-app.get('/Posts', async (req, res) =>
-{ 
+app.get('/Posts', async (req, res) => {
     const postModel = mongoose.model('posts', postSchema);
     const posts = await postModel.find();
     res.json(posts);
 });
 
-app.get('/Posts/:id', async (req, res) =>
-{
+app.get('/Posts/:id', async (req, res) => {
     const postModel = mongoose.model('posts', postSchema);
     const postId = req.params.id;
     const post = await postModel.findById(postId);
@@ -137,19 +135,19 @@ app.post('/logout', (req, res) => {
 });
 
 app.get('/', verifyUser, (req, res) => {
-    if(req.session.role){
-        return res.json({valid: true , role: req.session.role})
+    if (req.session.role) {
+        return res.json({ valid: true, role: req.session.role })
     }
-    else{
-        return res.json({valid : true})
+    else {
+        return res.json({ valid: true })
     }
 })
 
-app.get('/home',(req,res) => {
-    if(req.session.role){
-        return res.json({valid: true , role: req.session.role})
-    }else{
-        return res.json({valid : true})
+app.get('/home', (req, res) => {
+    if (req.session.role) {
+        return res.json({ valid: true, role: req.session.role })
+    } else {
+        return res.json({ valid: true })
     }
 })
 //Categories
@@ -176,12 +174,30 @@ app.delete("/delete/:id", (req, res) => {
 //users 
 
 
-app.get('/admin', (req,res)=> {
+app.get('/admin', (req, res) => {
     personneModel.find({})
-    .then(personnes=> res.json(personnes))
-    .catch(err => res.json(err))
+        .then(personnes => res.json(personnes))
+        .catch(err => res.json(err))
 })
- 
+app.post('/role/:id', verifyUser, async (req, res) => {
+    const { id } = req.params;
+    const { role } = req.body;
+    try {
+        const updatedPersonne = await personneModel.findByIdAndUpdate(
+            id,
+            { role: role }
+        );
+
+        if (!updatedPersonne) {
+            return res.status(404).send('User not found');
+        }
+
+        res.status(200).json("done");
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
 app.delete("/delete/:id", (req, res) => {
     personneModel.findByIdAndDelete({ _id: req.params.id })
         .then(personnes => res.json(personnes))
