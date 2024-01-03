@@ -3,15 +3,14 @@ const mongoose = require("mongoose")
 const cors = require("cors")
 const app = express()
 const session = require('express-session');
-
 const personneModel = require('./models/personne')
 const postModel = require('./models/post')
 const categorieModel = require('./models/categorie')
 const commentaireModel = require('./models/commentaire')
-
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
+
 app.use(cookieParser())
 app.use(express.json())
 app.use(cors({
@@ -44,6 +43,7 @@ const verifyUser = (req, res, next) => {
         });
     }
 };
+
 app.post('/register', (req, res) => {
     const { nom, prenom, age, email, password, pays } = req.body;
     bcrypt.hash(password, 10)
@@ -81,6 +81,7 @@ app.post("/login", (req, res) => {
             }
         })
 })
+
 app.post('/logout', (req, res) => {
     res.clearCookie('token');
     res.json('Logged out successfully');
@@ -172,8 +173,7 @@ app.delete("/delete/:id", (req, res) => {
 
 });
 
-//users 
-
+//Users 
 
 app.get('/admin', (req, res) => {
     personneModel.find({})
