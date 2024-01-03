@@ -19,6 +19,5 @@ const personneSchema = Schema({
   commentaires: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Commentaire' }]
 }, { timestamps: true });
 
-// 
 const personneModel = mongoose.model('personnes', personneSchema);
 module.exports = personneModel;
