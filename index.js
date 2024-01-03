@@ -3,22 +3,20 @@ const mongoose = require("mongoose")
 const cors = require("cors")
 const app = express()
 const session = require('express-session');
-
 const personneModel = require('./models/personne')
 const postSchema = require('./models/post')
 const categorieModel = require('./models/categorie')
 const commentaireModel = require('./models/commentaire')
-
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
+
 app.use(cookieParser())
 app.use(express.json())
 app.use(cors({
     origin: ["http://localhost:3000"],
     methods: ["GET", "POST", "DELETE", "UPDATE"],
-    credentials: true
-}
+    credentials: true}
 ))
 app.use(session({
     secret: 'jwt-secret-key',
@@ -45,6 +43,7 @@ const verifyUser = (req, res, next) => {
         });
     }
 };
+
 app.post('/register', (req, res) => {
     const { nom, prenom, age, email, password, pays } = req.body;
     bcrypt.hash(password, 10)
@@ -82,6 +81,7 @@ app.post("/login", (req, res) => {
             }
         })
 })
+
 app.post('/logout', (req, res) => {
     res.clearCookie('token');
     res.json('Logged out successfully');
@@ -94,7 +94,6 @@ app.post('/Posting', verifyUser, async (req, res) => {
     const postModel = mongoose.model('posts', postSchema);
     const newPost = await postModel.create({ titre, contenu, personne, date: new Date(), });
 })
-
 
 app.get('/Posts', async (req, res) => {
     const postModel = mongoose.model('posts', postSchema);
@@ -172,8 +171,7 @@ app.delete("/delete/:id", (req, res) => {
 
 });
 
-//users 
-
+//Users 
 
 app.get('/admin', (req, res) => {
     personneModel.find({})
