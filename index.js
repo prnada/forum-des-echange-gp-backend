@@ -131,12 +131,10 @@ app.get("/profile/:id", verifyUser, async (req, res) => {
     }
 });
 
-
 app.post('/logout', (req, res) => {
     res.clearCookie('token');
     res.json('Logged out successfully');
 });
-
 
 app.get('/', verifyUser, (req, res) => {
     if(req.session.role){
