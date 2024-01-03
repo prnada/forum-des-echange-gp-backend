@@ -87,6 +87,7 @@ app.post('/logout', (req, res) => {
     res.json('Logged out successfully');
 });
 
+//Posts
 
 app.post('/Posting', verifyUser, async (req, res) => {
     const { titre, contenu, personne } = req.body;
@@ -101,13 +102,12 @@ app.get('/Posts', async (req, res) => {
     res.json(posts);
 });
 
-app.get('/Posts/:id', async (req, res) => {
+app.get('/PostPage/:id', async (req, res) => {
     const postModel = mongoose.model('posts', postSchema);
     const postId = req.params.id;
     const post = await postModel.findById(postId);
     res.json(post);
 });
-
 
 app.get("/profile/:id", verifyUser, async (req, res) => {
     try {
@@ -150,6 +150,7 @@ app.get('/home', (req, res) => {
         return res.json({ valid: true })
     }
 })
+
 //Categories
 
 app.get('/categories', (req, res) => {
