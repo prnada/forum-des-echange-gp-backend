@@ -5,7 +5,7 @@ const app = express()
 const session = require('express-session');
 
 const personneModel = require('./models/personne')
-const postSchema = require('./models/post')
+const postModel = require('./models/post')
 const categorieModel = require('./models/categorie')
 const commentaireModel = require('./models/commentaire')
 
@@ -15,11 +15,10 @@ const cookieParser = require('cookie-parser')
 app.use(cookieParser())
 app.use(express.json())
 app.use(cors({
-    origin: ["http://localhost:3000"],
-    methods: ["GET", "POST", "DELETE", "UPDATE"],
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "DELETE", "PUT"],
     credentials: true
-}
-))
+  }));
 app.use(session({
     secret: 'jwt-secret-key',
     resave: false,
@@ -96,11 +95,12 @@ app.post('/Posting', verifyUser, async (req, res) => {
 })
 
 
-app.get('/Posts', async (req, res) => {
-    const postModel = mongoose.model('posts', postSchema);
-    const posts = await postModel.find();
-    res.json(posts);
-});
+
+app.get('/Posts', (req,res)=> {
+    postModel.find({})
+    .then(posts=> res.json(posts))
+    .catch(err => res.json(err))
+})
 
 app.get('/PostPage/:id', async (req, res) => {
     const postModel = mongoose.model('posts', postSchema);
@@ -205,6 +205,24 @@ app.delete("/delete/:id", (req, res) => {
         .catch((err) => res.json(err))
 
 });
+
+//posts 
+app.get('/edit/:id', (req, res) => {
+    const id=req.params.id;
+    postModel.findById({_id:id})
+      .then(posts => res.json(posts))
+      .catch((err) => {res.json(err)
+      })
+  })
+
+  app.put('/updateP/:id', (req, res) => {
+    postModel.findByIdAndUpdate(req.params.id, {
+      titre: req.body.titre,
+      contenu: req.body.contenu,
+    })
+      .then(posts => res.json(posts))
+      .catch(err => res.json(err));
+  });
 
 app.listen(3001, () => {
     console.log(`runnig`);
