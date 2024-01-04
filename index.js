@@ -108,6 +108,19 @@ app.get('/PostPage/:id', async (req, res) => {
     res.json(post);
 });
 
+/*app.post('/PostPage/:id', async (req, res) => {
+    const { contenu, personneId, postId, personne } = req.body;  
+    const newCommentaire = new commentaireModel({
+    contenu,
+    personneId,
+    postId,
+    personne
+    });
+    const savedCommentaire = newCommentaire.save();
+});*/
+
+//Personnes
+
 app.get("/profile/:id", verifyUser, async (req, res) => {
     try {
         const Post = mongoose.model('Post', postSchema);
